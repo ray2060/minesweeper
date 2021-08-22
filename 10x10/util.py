@@ -1,5 +1,5 @@
 from settings import *
-from random import random
+import random as r
 import re
 from exceptions___ import Exit
 
@@ -18,41 +18,47 @@ def is_num(area, x, y):
 
 
 def print_area(area, show_boom=False, x=INF, y=INF, marks=[]):
+    print(' ', 0, 1, 2, 3, 4, 5, 6, 7, 8, 9)
     for i in range(len(area)):
+        print('  ' + '-' * 20)
+        print(i, end='')
+        print('|', end='')
         for j in range(len(area[i])):
             if (i, j) in marks and show_boom:
                 if area[i][j] != '#':
-                    print('=', end=' ')
+                    print('=', end='|')
                 else:
-                    print('+', end=' ')
+                    print('+', end='|')
             elif (i, j) in marks:
-                print('=', end=' ')
+                print('=', end='|')
             elif i == x and j == y:
-                print('*', end=' ')
+                print('*', end='|')
             else:
                 if not show_boom and area[i][j] == '#':
-                    print('-', end=' ')
+                    print(' ', end='|')
                 else:
-                    print(area[i][j], end=' ')
+                    print(area[i][j], end='|')
         print()
 
 
-def get_area():
+def get_area(s):
     boom = 0
     area = []
     for i in range(10):
         try:
-            p = 0.1
+            p = 0.18
         except ZeroDivisionError:
-            area.append(['-', '-', '-', '-', '-', '-', '-', '-', '-', '-'])
+            area.append([' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '])
             continue
         res1 = []
         for j in range(10):
-            if random() <= p and boom < MAX_BOOM:
+            r.seed(s)
+            s = r.randint(0, s * 3)
+            if r.random() <= p and boom < MAX_BOOM:
                 res1.append('#')
                 boom += 1
             else:
-                res1.append('-')
+                res1.append(' ')
         area.append(res1)
     return area, boom
 
@@ -70,8 +76,11 @@ def say(s):
         return 'You stepped on a fake bomb, yelled, and passed out.'
     return 'What???'
 
-def is_mark_syntax(s):
-    r = r'mark [0-9] [0-9]'
+def is_mark_syntax(s, mode=1):
+    if mode == 1:
+        r = r'm [0-9] [0-9]'
+    else:
+        r = r'mark [0-9] [0-9]'
     if re.match(r, s):
         return True
     return False
@@ -84,6 +93,20 @@ def is_help_syntax(s):
     return False
 
 
+def is_press_syntax(s, mode=1):
+    if mode == 1:
+        r = r'p'
+    else:
+        r = r'press'
+    if re.match(r, s):
+        return True
+    return False
+
+
+def random_seed():
+    return r.randrange(1, 20000000)
+
+
 def all_clear(area, marks):
     cnt = 0
     for i in range(10):
@@ -91,6 +114,15 @@ def all_clear(area, marks):
             if (i, j) in marks or is_num(area, i, j):
                 cnt += 1
     return cnt == 100
+
+
+def is_seed(i):
+    try:
+        a = int(i)
+    except ValueError:
+        return False
+    return int(i) > 0
+
 def dfs(area, x, y):
     if is_num(area, x, y):
         return area

@@ -1,2 +1,2 @@
-MAX_BOOM = 9
+MAX_BOOM = 12
 INF = 2 ** 63
