@@ -145,6 +145,8 @@ def dfs(area, x, y):
     if y + 1 < 10 and x + 1 < 10 and is_boom(area, x + 1, y + 1):
         cnt += 1
     area[x][y] = str(cnt)
+    if cnt:
+        return area
     if y - 1 >= 0 and not is_boom(area, x, y - 1):
         area = dfs(area, x, y - 1)
     if x - 1 >= 0 and not is_boom(area, x - 1, y):
